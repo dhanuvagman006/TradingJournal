@@ -1,17 +1,32 @@
-# React + Vite
+# Trade Ledger — Trading Journal
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A private, local-first trading journal that runs entirely in your browser. Log each trading day with P/L, chart screenshots, structured notes and tags — then review your performance by calendar, weekday and analytics.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Log Entry** — daily P/L, number of trades, instruments, tags, five structured note sections (plan, review, mistakes, lessons, emotions), and drag-and-drop chart screenshots (auto-compressed, up to ~4 MB/day).
+- **Calendar** — month view heat-mapped by P/L; click any day to review or edit it.
+- **Weekday Review** — see all your Mondays (or any weekday) side by side to spot day-of-week patterns.
+- **Analytics** — equity curve, per-day P/L bars, win rate, streaks and tag breakdowns (Recharts).
+- **Compare** — put any two days side by side, screenshots included.
+- **Search** — full-text search across notes, tags and instruments.
+- **Stats strip** — net P/L, win rate, current streak, best day and average per session, always visible.
 
-## React Compiler
+## Permanent storage
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+All data is stored **on your device** in the browser's **IndexedDB** (database `trade-ledger`) — nothing is uploaded anywhere. Entries, screenshots and settings survive page refreshes and browser restarts. The app also requests durable-storage permission (`navigator.storage.persist()`) so the browser won't evict your journal under storage pressure.
 
-## Expanding the Oxlint configuration
+You can export/import a full JSON backup from the **Settings** tab. Note: clearing the browser's site data will erase the journal, and data does not sync between browsers or devices — use the backup export to move it.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
-# TradingJournal
+## Run it
+
+```bash
+npm install
+npm run dev      # start dev server
+npm run build    # production build in dist/
+npm run preview  # preview the production build
+```
+
+## Stack
+
+React 19 · Vite 8 · Recharts · IndexedDB (no backend, no accounts)

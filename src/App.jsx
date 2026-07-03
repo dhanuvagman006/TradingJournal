@@ -20,9 +20,17 @@ const CSS = `
   --up:#31C77F;--up-bg:rgba(49,199,127,.10);--up-line:rgba(49,199,127,.35);
   --down:#F0564D;--down-bg:rgba(240,86,77,.10);--down-line:rgba(240,86,77,.35);
   --amber:#F2A93B;--amber-bg:rgba(242,169,59,.12);
-  --mono:ui-monospace,"SF Mono","Cascadia Code",Consolas,"Roboto Mono",Menlo,monospace;
-  min-height:100vh;background:var(--bg);color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Inter","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono","Cascadia Code",Consolas,"Roboto Mono",Menlo,monospace;
+  min-height:100vh;color:var(--text);
+  background:
+    radial-gradient(1100px 480px at 78% -12%, rgba(242,169,59,.075), transparent 62%),
+    radial-gradient(900px 420px at -8% -6%, rgba(49,199,127,.055), transparent 58%),
+    linear-gradient(rgba(35,43,61,.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(35,43,61,.16) 1px, transparent 1px),
+    var(--bg);
+  background-size:auto,auto,44px 44px,44px 44px,auto;
+  background-attachment:fixed;
+  font-family:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Inter","Helvetica Neue",Arial,sans-serif;
   font-size:14px;line-height:1.5;}
 .tj-root *{box-sizing:border-box}
 .tj-root ::selection{background:rgba(242,169,59,.30)}
@@ -30,14 +38,20 @@ const CSS = `
 .tj-root :focus-visible{outline:2px solid var(--amber);outline-offset:1px;border-radius:6px}
 
 .tj-shell{max-width:1160px;margin:0 auto;padding:0 20px 80px}
-.tj-header{display:flex;align-items:center;gap:14px;padding:18px 0 10px;flex-wrap:wrap}
-.tj-logo{display:flex;align-items:center;gap:10px;min-width:0}
-.tj-logo h1{font-size:17px;font-weight:700;letter-spacing:.06em;margin:0;text-transform:uppercase}
-.tj-logo .tj-sub{font-size:11px;color:var(--faint);letter-spacing:.14em;text-transform:uppercase;margin-top:-2px}
+.tj-header{display:flex;align-items:center;gap:14px;padding:22px 0 14px;flex-wrap:wrap}
+.tj-logo{display:flex;align-items:center;gap:11px;min-width:0}
+.tj-logo h1{font-size:18px;font-weight:700;letter-spacing:.07em;margin:0;text-transform:uppercase}
+.tj-logo .tj-sub{font-size:11px;color:var(--faint);letter-spacing:.16em;text-transform:uppercase;margin-top:-2px}
 .tj-header-spacer{flex:1}
-.tj-total-chip{display:flex;flex-direction:column;align-items:flex-end;gap:0}
-.tj-total-chip .tj-tc-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
-.tj-total-chip .tj-tc-val{font-family:var(--mono);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+
+.tj-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px;margin:2px 0 18px}
+.tj-stat{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
+  border-radius:12px;padding:11px 14px 10px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.tj-stat-l{font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tj-stat-v{font-family:var(--mono);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tj-stat-s{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tj-iconbtn{background:var(--panel);border:1px solid var(--line);border-radius:8px;width:36px;height:36px;
   display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);flex:0 0 auto}
 .tj-iconbtn:hover{border-color:var(--line2);color:var(--text)}
@@ -45,11 +59,13 @@ const CSS = `
 .tj-tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
 .tj-tabs::-webkit-scrollbar{display:none}
 .tj-tab{background:none;border:none;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;
-  color:var(--muted);font-weight:600;font-size:13px;letter-spacing:.04em;white-space:nowrap}
-.tj-tab:hover{color:var(--text)}
+  color:var(--muted);font-weight:600;font-size:13px;letter-spacing:.04em;white-space:nowrap;
+  border-radius:8px 8px 0 0;transition:color .12s,background .12s}
+.tj-tab:hover{color:var(--text);background:rgba(255,255,255,.025)}
 .tj-tab.tj-active{color:var(--amber);border-bottom-color:var(--amber)}
 
-.tj-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.tj-panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;
+  box-shadow:0 1px 0 rgba(255,255,255,.02) inset,0 10px 28px -18px rgba(0,0,0,.55)}
 .tj-panel + .tj-panel{margin-top:16px}
 .tj-h2{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
 .tj-hint{font-size:12px;color:var(--faint)}
@@ -246,39 +262,117 @@ const CSS = `
 }
 `;
 
-/* ---------------- storage layer (with in-memory fallback) ---------------- */
+/* ---------------- storage layer ----------------
+   Priority:
+   1. window.storage  (Claude artifact environment, if present)
+   2. IndexedDB       (permanent browser storage — survives refresh,
+                       restarts, and handles multi-MB screenshots)
+   3. in-memory Map   (last-resort fallback, e.g. some private modes)
+--------------------------------------------------- */
 
 const memStore = new Map();
-const hasRealStorage =
+const hasArtifactStorage =
   typeof window !== "undefined" && window.storage && typeof window.storage.get === "function";
+const hasIDB = typeof indexedDB !== "undefined";
+const hasRealStorage = hasArtifactStorage || hasIDB;
+
+// Ask the browser to treat this origin's data as durable (won't be
+// evicted under storage pressure). Best-effort; safe to ignore failures.
+if (!hasArtifactStorage && hasIDB && typeof navigator !== "undefined" &&
+    navigator.storage && typeof navigator.storage.persist === "function") {
+  navigator.storage.persist().catch(() => {});
+}
+
+const IDB_NAME = "trade-ledger";
+const IDB_STORE = "kv";
+let idbPromise = null;
+
+function idbOpen() {
+  if (!idbPromise) {
+    idbPromise = new Promise((resolve, reject) => {
+      const req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+      };
+      req.onsuccess = () => {
+        const db = req.result;
+        db.onversionchange = () => db.close();
+        resolve(db);
+      };
+      req.onerror = () => { idbPromise = null; reject(req.error || new Error("IndexedDB open failed")); };
+    });
+  }
+  return idbPromise;
+}
+
+async function idbCall(mode, run) {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    let req;
+    try {
+      const tx = db.transaction(IDB_STORE, mode);
+      req = run(tx.objectStore(IDB_STORE));
+    } catch (e) { reject(e); return; }
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error || new Error("IndexedDB request failed"));
+  });
+}
 
 const store = {
   async get(key) {
-    if (!hasRealStorage) return memStore.has(key) ? memStore.get(key) : null;
-    try {
-      const r = await window.storage.get(key);
-      return r && r.value != null ? r.value : null;
-    } catch (e) {
-      return null; // missing key (or read error) -> treat as absent
+    if (hasArtifactStorage) {
+      try {
+        const r = await window.storage.get(key);
+        return r && r.value != null ? r.value : null;
+      } catch (e) { return null; }
     }
+    if (hasIDB) {
+      try {
+        const v = await idbCall("readonly", (os) => os.get(key));
+        return v == null ? null : v;
+      } catch (e) { return null; }
+    }
+    return memStore.has(key) ? memStore.get(key) : null;
   },
   async set(key, value) {
-    if (!hasRealStorage) { memStore.set(key, value); return; }
-    const r = await window.storage.set(key, value);
-    if (!r) throw new Error("Storage write failed");
+    if (hasArtifactStorage) {
+      const r = await window.storage.set(key, value);
+      if (!r) throw new Error("Storage write failed");
+      return;
+    }
+    if (hasIDB) {
+      await idbCall("readwrite", (os) => os.put(value, key)); // throws on quota/write failure
+      return;
+    }
+    memStore.set(key, value);
   },
   async del(key) {
-    if (!hasRealStorage) { memStore.delete(key); return; }
-    try { await window.storage.delete(key); } catch (e) { /* already gone */ }
+    if (hasArtifactStorage) {
+      try { await window.storage.delete(key); } catch (e) { /* already gone */ }
+      return;
+    }
+    if (hasIDB) {
+      try { await idbCall("readwrite", (os) => os.delete(key)); } catch (e) { /* already gone */ }
+      return;
+    }
+    memStore.delete(key);
   },
   async list(prefix) {
-    if (!hasRealStorage) return [...memStore.keys()].filter((k) => k.startsWith(prefix || ""));
-    try {
-      const r = await window.storage.list(prefix);
-      return r && Array.isArray(r.keys) ? r.keys : [];
-    } catch (e) {
-      return [];
+    if (hasArtifactStorage) {
+      try {
+        const r = await window.storage.list(prefix);
+        return r && Array.isArray(r.keys) ? r.keys : [];
+      } catch (e) { return []; }
     }
+    if (hasIDB) {
+      try {
+        const keys = await idbCall("readonly", (os) => os.getAllKeys());
+        const p = prefix || "";
+        return keys.filter((k) => typeof k === "string" && k.startsWith(p));
+      } catch (e) { return []; }
+    }
+    return [...memStore.keys()].filter((k) => k.startsWith(prefix || ""));
   },
 };
 
@@ -437,6 +531,71 @@ const Ic = {
 };
 
 /* ---------------- shared atoms ---------------- */
+
+function StatsStrip({ index, settings }) {
+  const s = useMemo(() => {
+    const dates = Object.keys(index.entries).sort();
+    if (!dates.length) return null;
+    let total = 0, wins = 0, losses = 0, best = null;
+    for (const d of dates) {
+      const pl = Number(index.entries[d].pl) || 0;
+      total += pl;
+      if (pl > 0) wins++; else if (pl < 0) losses++;
+      if (!best || pl > best.pl) best = { d, pl };
+    }
+    let streak = 0, dir = 0;
+    for (let i = dates.length - 1; i >= 0; i--) {
+      const pl = Number(index.entries[dates[i]].pl) || 0;
+      const sgn = pl > 0 ? 1 : pl < 0 ? -1 : 0;
+      if (sgn === 0) break;
+      if (dir === 0) dir = sgn;
+      if (sgn !== dir) break;
+      streak++;
+    }
+    const decided = wins + losses;
+    return {
+      n: dates.length, total,
+      winRate: decided ? Math.round((wins / decided) * 100) : null,
+      avg: total / dates.length, best, streak, dir,
+    };
+  }, [index.entries]);
+
+  if (!s) return null;
+  const c = settings.currency;
+  return (
+    <div className="tj-stats">
+      <div className="tj-stat">
+        <span className="tj-stat-l">Net P/L</span>
+        <span className={`tj-stat-v ${plClass(s.total)}`}>{fmtPL(s.total, c)}</span>
+        <span className="tj-stat-s">{s.n} session{s.n === 1 ? "" : "s"} logged</span>
+      </div>
+      <div className="tj-stat">
+        <span className="tj-stat-l">Win rate</span>
+        <span className={`tj-stat-v ${s.winRate == null ? "tj-flat" : s.winRate >= 50 ? "tj-up" : "tj-down"}`}>
+          {s.winRate == null ? "—" : `${s.winRate}%`}
+        </span>
+        <span className="tj-stat-s">green vs red days</span>
+      </div>
+      <div className="tj-stat">
+        <span className="tj-stat-l">Streak</span>
+        <span className={`tj-stat-v ${s.streak === 0 ? "tj-flat" : s.dir > 0 ? "tj-up" : "tj-down"}`}>
+          {s.streak === 0 ? "—" : `${s.streak}d ${s.dir > 0 ? "▲" : "▼"}`}
+        </span>
+        <span className="tj-stat-s">{s.streak === 0 ? "no run yet" : s.dir > 0 ? "winning run" : "losing run"}</span>
+      </div>
+      <div className="tj-stat">
+        <span className="tj-stat-l">Best day</span>
+        <span className={`tj-stat-v ${plClass(s.best.pl)}`}>{fmtPL(s.best.pl, c)}</span>
+        <span className="tj-stat-s">{fmtDateShort(s.best.d)}</span>
+      </div>
+      <div className="tj-stat">
+        <span className="tj-stat-l">Avg / session</span>
+        <span className={`tj-stat-v ${plClass(s.avg)}`}>{fmtPL(s.avg, c)}</span>
+        <span className="tj-stat-s">across all logged days</span>
+      </div>
+    </div>
+  );
+}
 
 function PL({ v, currency, style }) {
   return (
@@ -1967,11 +2126,6 @@ export default function TradeLedger() {
   }, []);
   const openLightbox = useCallback((images, i) => setLightbox({ images, index: i }), []);
 
-  const totals = useMemo(() => {
-    const vals = Object.values(index.entries);
-    return { pl: vals.reduce((s, m) => s + m.pl, 0), n: vals.length };
-  }, [index.entries]);
-
   if (!booted) {
     return (
       <div className="tj-root">
@@ -1997,12 +2151,6 @@ export default function TradeLedger() {
             </div>
           </div>
           <div className="tj-header-spacer" />
-          {totals.n > 0 && (
-            <div className="tj-total-chip">
-              <span className="tj-tc-label">All-time · {totals.n} sessions</span>
-              <span className={`tj-tc-val ${plClass(totals.pl)}`}>{fmtPL(totals.pl, settings.currency)}</span>
-            </div>
-          )}
           <SearchBox index={index} settings={settings} onOpen={openDay} />
           <button className="tj-iconbtn" onClick={() => setCompare({})} aria-label="Compare two days" title="Compare two days">
             {Ic.compare}
@@ -2014,6 +2162,8 @@ export default function TradeLedger() {
             Persistent storage isn't available in this environment — entries will be lost when you close this page.
           </div>
         )}
+
+        <StatsStrip index={index} settings={settings} />
 
         <nav className="tj-tabs" style={{ marginBottom: 16 }}>
           {TABS.map((t) => (
